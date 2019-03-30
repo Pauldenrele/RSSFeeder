@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
+import android.view.MenuItem
 import com.example.rssfeeder.Adapter.feedAdapter
 import com.example.rssfeeder.Common.HTTPDataHandler
 import com.example.rssfeeder.Model.RSSObject
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         Toolbar.title = "NEWS"
         setSupportActionBar(Toolbar)
 
-        val linearLayoutManager = LinearLayoutManager(baseContext , LinearLayoutManager.VERTICAL , false)
+        val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = linearLayoutManager
 
         loadRSS()
@@ -33,23 +34,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadRSS() {
-        val loadRSSAsync = object :AsyncTask<String,String,String>(){
+        val loadRSSAsync = object : AsyncTask<String, String, String>() {
             internal var mDialog = ProgressDialog(this@MainActivity)
             override fun onPostExecute(result: String?) {
-            mDialog.dismiss()
+                mDialog.dismiss()
                 //Using GSON to convert JSON to Object
-                var rssObject:RSSObject
-                rssObject =Gson().fromJson<RSSObject>(s , RSSObject::class.java!!)
-                val adapter = feedAdapter(rssObject , baseContext)
+                var rssObject: RSSObject
+                rssObject = Gson().fromJson<RSSObject>(result, RSSObject::class.java!!)
+                val adapter = feedAdapter(rssObject, baseContext)
                 recyclerView.adapter = adapter
                 adapter.notifyDataSetChanged()
             }
 
             override fun doInBackground(vararg params: String): String {
-                val result:String
-                val http=HTTPDataHandler()
+                val result: String
+                val http = HTTPDataHandler()
                 result = http.getHTTPDataHandler(params[0])
-                return  result
+                return result
 
             }
 
@@ -66,6 +67,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_refresh)
+            loadRSS()
+        return true
     }
 }
