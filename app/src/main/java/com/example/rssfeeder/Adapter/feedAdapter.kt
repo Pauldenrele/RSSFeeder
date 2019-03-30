@@ -1,6 +1,8 @@
 package com.example.rssfeeder.Adapter
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +40,7 @@ class feedViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) , View.On
 
     override fun onLongClick(v: View?): Boolean {
         itemClickListener!!.onClick(v , adapterPosition, true)
+        return true
     }
 
 }
@@ -63,7 +66,10 @@ return  feedViewHolder(itemView)
         holder.txtTime.text = rssObject.items[position].pubDate
         
         holder.setItemClickListener(ItemClickListener { view, position, isLongClick ->
-            if(!isLongClick)
+            if(!isLongClick){
+ val browserIntent = Intent (Intent.ACTION_VIEW ,  Uri.parse(rssObject.items[position].link))
+                mContext.startActivity(browserIntent)
+            }
         })
     }
 
